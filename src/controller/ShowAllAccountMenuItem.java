@@ -1,15 +1,16 @@
 package controller;
 
-import exception.ApplicationException;
+import view.general.Color;
 
 public class ShowAllAccountMenuItem extends MenuItem {
 
 	public ShowAllAccountMenuItem() {
-		super("Show All Accounts");
+		super("Show All Accounts", Color.GREEN);
 	}
 
 	@Override
-	public void execute() throws ApplicationException {
+	public boolean execute() {
 		// TODO: implement
+		return true;
 	}
 }
