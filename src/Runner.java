@@ -13,7 +13,7 @@ public class Runner {
 			Scanner console = new Scanner(System.in);
 			boolean work = true;
 			while(work) {
-				menu.print(20);
+				menu.print(26);
 				System.out.print("Choose an option: ");
 				try {
 					int option = Integer.parseInt(console.nextLine());
