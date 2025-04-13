@@ -16,12 +16,12 @@ public class AccountRepository {
 		try(TsvFileReader reader = new TsvFileReader(fileName)) {
 			List<String> line;
 			for(int row = 1; (line = reader.readLine()) != null; row++) {
-				if(line.size() == 4) {
+				if(line.size() == 5) {
 					Account account = new Account();
 					try {
-						account.setId(Long.parseLong(line.get(0)));
+						account.setId(Long.parseLong(line.getFirst()));
 					} catch(NumberFormatException e) {
-						throw new IOException(String.format("File %s format error: row %d contains not integer ID \"%s\" in 1st column", fileName, row, line.get(0)));
+						throw new IOException(String.format("File %s format error: row %d contains not integer ID \"%s\" in 1st column", fileName, row, line.getFirst()));
 					}
 					account.setAccountNumber(line.get(1));
 					account.setClient(line.get(2));
@@ -30,10 +30,11 @@ public class AccountRepository {
 					} catch(NumberFormatException e) {
 						throw new IOException(String.format("File %s format error: row %d contains not integer balance \"%s\" in 4th column", fileName, row, line.get(3)));
 					}
+					account.setActive(Boolean.parseBoolean(line.get(4)));
 					accountsById.put(account.getId(), account);
 					accountsByNumber.put(account.getAccountNumber(), account);
 				} else {
-					throw new IOException(String.format("File %s format error: row %d contains %s columns instead of 4", fileName, row, line.size()));
+					throw new IOException(String.format("File %s format error: row %d contains %s columns instead of 5", fileName, row, line.size()));
 				}
 			}
 		} catch(FileNotFoundException ignored) {}
@@ -57,6 +58,7 @@ public class AccountRepository {
 
 	public List<Account> readAll() {
 		return accountsById.values().stream()
+				.filter(Account::isActive)
 				.sorted(Comparator.comparing(Account::getClient))
 				.toList();
 	}
@@ -94,7 +96,8 @@ public class AccountRepository {
 					account.getId().toString(),
 					account.getAccountNumber(),
 					account.getClient(),
-					account.getBalance().toString()
+					account.getBalance().toString(),
+					Boolean.toString(account.isActive())
 				);
 				writer.write(String.join("\t", row));
 				writer.newLine();

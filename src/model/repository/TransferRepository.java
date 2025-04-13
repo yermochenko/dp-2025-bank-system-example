@@ -22,9 +22,9 @@ public class TransferRepository {
 				if(line.size() == 5) {
 					Transfer transfer = new Transfer();
 					try {
-						transfer.setId(Long.parseLong(line.get(0)));
+						transfer.setId(Long.parseLong(line.getFirst()));
 					} catch(NumberFormatException e) {
-						throw new IOException(String.format("File %s format error: row %d contains not integer ID \"%s\" in 1st column", fileName, row, line.get(0)));
+						throw new IOException(String.format("File %s format error: row %d contains not integer ID \"%s\" in 1st column", fileName, row, line.getFirst()));
 					}
 					try {
 						String id = line.get(1);

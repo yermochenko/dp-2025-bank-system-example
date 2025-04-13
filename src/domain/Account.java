@@ -5,6 +5,7 @@ public class Account {
 	private String accountNumber;
 	private String client;
 	private Long balance;
+	private boolean active;
 
 	public Long getId() {
 		return id;
@@ -36,5 +37,13 @@ public class Account {
 
 	public void setBalance(Long balance) {
 		this.balance = balance;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
