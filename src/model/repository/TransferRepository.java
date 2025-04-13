@@ -65,7 +65,7 @@ public class TransferRepository {
 		}
 	}
 
-	public void create(Transfer transfer) {
+	public void create(Transfer transfer) throws IOException {
 		Long id = transfers.keySet().stream().max(Long::compareTo).orElse(0L) + 1;
 		transfer.setId(id);
 		transfers.put(id, transfer);
@@ -87,21 +87,21 @@ public class TransferRepository {
 				.toList();
 	}
 
-	public void update(Transfer transfer) {
+	public void update(Transfer transfer) throws IOException {
 		if(read(transfer.getId()).isPresent()) {
 			transfers.put(transfer.getId(), transfer);
 			save();
 		}
 	}
 
-	public void delete(Long id) {
+	public void delete(Long id) throws IOException {
 		if(read(id).isPresent()) {
 			transfers.remove(id);
 			save();
 		}
 	}
 
-	private void save() {
+	private void save() throws IOException {
 		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
 			for(Transfer transfer : transfers.values()) {
 				List<String> row = List.of(
@@ -114,8 +114,6 @@ public class TransferRepository {
 				writer.write(String.join("\t", row));
 				writer.newLine();
 			}
-		} catch(IOException e) {
-			System.err.println(e.getMessage());
 		}
 	}
 }

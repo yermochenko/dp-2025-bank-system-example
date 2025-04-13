@@ -39,7 +39,7 @@ public class AccountRepository {
 		}
 	}
 
-	public void create(Account account) {
+	public void create(Account account) throws IOException {
 		Long id = accountsById.keySet().stream().max(Long::compareTo).orElse(0L) + 1;
 		account.setId(id);
 		accountsById.put(id, account);
@@ -61,7 +61,7 @@ public class AccountRepository {
 				.toList();
 	}
 
-	public void update(Account account) {
+	public void update(Account account) throws IOException {
 		if(read(account.getId()).isPresent()) {
 			accountsById.put(account.getId(), account);
 			accountsByNumber.put(account.getAccountNumber(), account);
@@ -69,7 +69,7 @@ public class AccountRepository {
 		}
 	}
 
-	public void delete(Long id) {
+	public void delete(Long id) throws IOException {
 		Optional<Account> account = read(id);
 		if(account.isPresent()) {
 			accountsById.remove(account.get().getId());
@@ -78,7 +78,7 @@ public class AccountRepository {
 		}
 	}
 
-	public void deleteByNumber(String number) {
+	public void deleteByNumber(String number) throws IOException {
 		Optional<Account> account = readByNumber(number);
 		if(account.isPresent()) {
 			accountsById.remove(account.get().getId());
@@ -87,7 +87,7 @@ public class AccountRepository {
 		}
 	}
 
-	private void save() {
+	private void save() throws IOException {
 		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
 			for(Account account : accountsById.values()) {
 				List<String> row = List.of(
@@ -99,8 +99,6 @@ public class AccountRepository {
 				writer.write(String.join("\t", row));
 				writer.newLine();
 			}
-		} catch(IOException e) {
-			System.err.println(e.getMessage());
 		}
 	}
 }
