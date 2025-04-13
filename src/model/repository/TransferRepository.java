@@ -84,20 +84,6 @@ public class TransferRepository {
 				.toList();
 	}
 
-	public void update(Transfer transfer) throws IOException {
-		if(read(transfer.getId()).isPresent()) {
-			transfers.put(transfer.getId(), transfer);
-			save();
-		}
-	}
-
-	public void delete(Long id) throws IOException {
-		if(read(id).isPresent()) {
-			transfers.remove(id);
-			save();
-		}
-	}
-
 	private void save() throws IOException {
 		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
 			for(Transfer transfer : transfers.values()) {
