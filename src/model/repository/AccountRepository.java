@@ -36,7 +36,7 @@ public class AccountRepository {
 					throw new IOException(String.format("File %s format error: row %d contains %s columns instead of 4", fileName, row, line.size()));
 				}
 			}
-		}
+		} catch(FileNotFoundException ignored) {}
 	}
 
 	public void create(Account account) throws IOException {

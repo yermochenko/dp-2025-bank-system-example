@@ -3,10 +3,7 @@ package model.repository;
 import domain.Account;
 import domain.Transfer;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +59,7 @@ public class TransferRepository {
 					throw new IOException(String.format("File %s format error: row %d contains %s columns instead of 5", fileName, row, line.size()));
 				}
 			}
-		}
+		} catch(FileNotFoundException ignored) {}
 	}
 
 	public void create(Transfer transfer) throws IOException {
