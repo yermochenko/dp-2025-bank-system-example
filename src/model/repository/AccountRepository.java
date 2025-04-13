@@ -5,8 +5,6 @@ import domain.Account;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AccountRepository {
 	private final String fileName;
@@ -45,16 +43,8 @@ public class AccountRepository {
 	public void create(Account account) throws IOException {
 		Long id = accountsById.keySet().stream().max(Long::compareTo).orElse(0L) + 1;
 		account.setId(id);
-		Random random = new Random();
-		String accountNumber;
-		do {
-			accountNumber = Stream.generate(() -> String.format("%04d", random.nextInt(10001) - 1)).limit(4).collect(Collectors.joining(" "));
-		} while(accountsByNumber.containsKey(accountNumber));
-		account.setAccountNumber(accountNumber);
-		account.setBalance(0L);
-		account.setActive(true);
 		accountsById.put(id, account);
-		accountsByNumber.put(accountNumber, account);
+		accountsByNumber.put(account.getAccountNumber(), account);
 		save();
 	}
 
@@ -83,15 +73,6 @@ public class AccountRepository {
 
 	public void delete(Long id) throws IOException {
 		Optional<Account> account = read(id);
-		if(account.isPresent()) {
-			accountsById.remove(account.get().getId());
-			accountsByNumber.remove(account.get().getAccountNumber());
-			save();
-		}
-	}
-
-	public void deleteByNumber(String number) throws IOException {
-		Optional<Account> account = readByNumber(number);
 		if(account.isPresent()) {
 			accountsById.remove(account.get().getId());
 			accountsByNumber.remove(account.get().getAccountNumber());
