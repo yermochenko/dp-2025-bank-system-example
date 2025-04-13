@@ -3,6 +3,7 @@ package di;
 import controller.AddNewAccountMenuItem;
 import controller.ExitMenuItem;
 import controller.MenuItem;
+import controller.ShowAllAccountMenuItem;
 import exception.ApplicationException;
 import model.repository.AccountRepository;
 import model.service.AccountService;
@@ -24,11 +25,14 @@ public class MenuCreator {
 		AccountService accountService = new AccountService();
 		accountService.setAccountRepository(accountRepository);
 
+		ShowAllAccountMenuItem showAllAccountMenuItem = new ShowAllAccountMenuItem();
+		showAllAccountMenuItem.setAccountService(accountService);
 		AddNewAccountMenuItem addNewAccountMenuItem = new AddNewAccountMenuItem();
 		addNewAccountMenuItem.setAccountService(accountService);
 		ExitMenuItem exitMenuItem = new ExitMenuItem();
 
 		return List.of(
+			showAllAccountMenuItem,
 			addNewAccountMenuItem,
 			exitMenuItem
 		);
