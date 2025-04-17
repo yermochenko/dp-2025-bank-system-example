@@ -40,12 +40,15 @@ public class MenuCreator {
 		addNewAccountMenuItem.setAccountService(accountService);
 		CreditFundsToAccountMenuItem creditFundsToAccountMenuItem = new CreditFundsToAccountMenuItem();
 		creditFundsToAccountMenuItem.setTransferService(transferService);
+		TransferMoneyMenuItem transferMoneyMenuItem = new TransferMoneyMenuItem();
+		transferMoneyMenuItem.setTransferService(transferService);
 		ExitMenuItem exitMenuItem = new ExitMenuItem();
 
 		return List.of(
 			showAllAccountMenuItem,
 			addNewAccountMenuItem,
 			creditFundsToAccountMenuItem,
+			transferMoneyMenuItem,
 			exitMenuItem
 		);
 	}

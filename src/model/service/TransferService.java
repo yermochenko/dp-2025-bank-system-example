@@ -46,4 +46,44 @@ public class TransferService {
 			throw new ApplicationException("Account not found");
 		}
 	}
+
+	public void transfer(
+		String srcAccountNumber,
+		String destAccountNumber,
+		long amount
+	) throws ApplicationException {
+		Optional<Account> foundSrcAccount = accountRepository.readByNumber(srcAccountNumber);
+		if(foundSrcAccount.isEmpty()) {
+			throw new ApplicationException("Source account not found");
+		}
+		Account srcAccount = foundSrcAccount.get();
+		if(!srcAccount.isActive()) {
+			throw new ApplicationException("Source account was blocked or closed");
+		}
+		Optional<Account> foundDestAccount = accountRepository.readByNumber(destAccountNumber);
+		if(foundDestAccount.isEmpty()) {
+			throw new ApplicationException("Destination account not found");
+		}
+		Account destAccount = foundDestAccount.get();
+		if(!destAccount.isActive()) {
+			throw new ApplicationException("Destination account was blocked or closed");
+		}
+		if(amount > srcAccount.getBalance()) {
+			throw new ApplicationException("Source account has insufficient funds");
+		}
+		try {
+			srcAccount.setBalance(srcAccount.getBalance() - amount);
+			accountRepository.update(srcAccount);
+			destAccount.setBalance(destAccount.getBalance() + amount);
+			accountRepository.update(destAccount);
+			Transfer transfer = new Transfer();
+			transfer.setFromAccount(srcAccount);
+			transfer.setToAccount(destAccount);
+			transfer.setAmount(amount);
+			transfer.setTransferDate(new Date());
+			transferRepository.create(transfer);
+		} catch(IOException e) {
+			throw new ApplicationException(e.getMessage());
+		}
+	}
 }
