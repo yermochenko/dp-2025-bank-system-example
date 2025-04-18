@@ -85,7 +85,7 @@ public class TransferRepository {
 	}
 
 	private void save() throws IOException {
-		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
+		try(TsvFileWriter writer = new TsvFileWriter(fileName)) {
 			for(Transfer transfer : transfers.values()) {
 				List<String> row = List.of(
 					transfer.getId().toString(),
@@ -94,8 +94,7 @@ public class TransferRepository {
 					DATE_FORMAT.format(transfer.getTransferDate()),
 					transfer.getAmount().toString()
 				);
-				writer.write(String.join("\t", row));
-				writer.newLine();
+				writer.writeLine(row);
 			}
 		}
 	}

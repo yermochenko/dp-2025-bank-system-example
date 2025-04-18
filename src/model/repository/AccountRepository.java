@@ -2,8 +2,8 @@ package model.repository;
 
 import domain.Account;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class AccountRepository {
@@ -81,7 +81,7 @@ public class AccountRepository {
 	}
 
 	private void save() throws IOException {
-		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
+		try(TsvFileWriter writer = new TsvFileWriter(fileName)) {
 			for(Account account : accountsById.values()) {
 				List<String> row = List.of(
 					account.getId().toString(),
@@ -90,8 +90,7 @@ public class AccountRepository {
 					account.getBalance().toString(),
 					Boolean.toString(account.isActive())
 				);
-				writer.write(String.join("\t", row));
-				writer.newLine();
+				writer.writeLine(row);
 			}
 		}
 	}
