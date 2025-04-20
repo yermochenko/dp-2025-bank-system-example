@@ -3,7 +3,9 @@ package view.general;
 import view.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class TableComponent extends Component {
@@ -102,6 +104,100 @@ public class TableComponent extends Component {
 			notFirst = true;
 		}
 		result.add(bottomBorder);
+		return result;
+	}
+
+	/**
+	 * Calculate relative widths of table columns for given fixed width of whole table and preferred max width of each
+	 * column.
+	 * Method calculates:
+	 * 1. Columns count as size of list <code>maxWidths</code>
+	 * 2. Total widths of all columns as difference between width of whole table and width of all vertical borders
+	 *    (width of all vertical borders is calculated as count of columns plus 1)
+	 * 3. Total widths is divided between all columns using absolute values
+	 * 4. Absolute values is converted into relative values considering that total width is equal 1
+	 * @param maxWidths contains preferred max width for each column or 0 if there is no preferred max width
+	 *                  (if this column can have any width)
+	 * @param width width of whole table including borders
+	 * @return list of double which contains relative widths of table columns (sum of all these widths will equal 1)
+	 */
+	public static List<Double> calcWidths(List<Integer> maxWidths, int width) {
+		final int n = maxWidths.size();
+		final int totalWidth = width - n - 1;
+		AtomicInteger maxSum = new AtomicInteger();
+		AtomicInteger flexCount = new AtomicInteger();
+		maxWidths.forEach(w -> {
+			if(w == 0) {
+				flexCount.getAndIncrement();
+			} else {
+				maxSum.addAndGet(w);
+			}
+		});
+		int minWidth = maxSum.get() + flexCount.get();
+		List<Integer> widths = new ArrayList<>(n);
+		if(minWidth < totalWidth) {
+			if(flexCount.get() > 0) {
+				int[] rests = div(totalWidth - maxSum.get(), flexCount.get());
+				for(int i = 0, j = 0; i < n; i++) {
+					int w = maxWidths.get(i);
+					widths.add(w == 0 ? rests[j++] : w);
+				}
+			} else {
+				for(int i = 0; i < n; i++) {
+					widths.add((int)Math.round((double)maxWidths.get(i) * totalWidth / minWidth));
+				}
+				checkWidth(widths, totalWidth);
+			}
+		} else if(minWidth > totalWidth) {
+			for(int i = 0; i < n; i++) {
+				int w = maxWidths.get(i);
+				if(w != 0) {
+					widths.add((int) Math.round((double) w * (totalWidth - flexCount.get()) / maxSum.get()));
+				} else {
+					widths.add(1);
+				}
+			}
+			checkWidth(widths, totalWidth);
+		} else {
+			for(int i = 0; i < n; i++) {
+				int w = maxWidths.get(i);
+				widths.add(w == 0 ? 1 : w);
+			}
+		}
+		List<Double> result = new ArrayList<>(widths.stream().map(w -> Math.round(10000.0 * w / totalWidth) / 10000.0).toList());
+		double sum = result.stream().mapToDouble(w -> w).sum();
+		if(sum != 1) {
+			int imax = 0;
+			for(int i = 1; i < n; i++) {
+				if(result.get(i) > result.get(imax)) {
+					imax = i;
+				}
+			}
+			result.set(imax, 1 - sum + result.get(imax));
+		}
+		return result;
+	}
+
+	private static void checkWidth(List<Integer> widths, int totalWidth) {
+		int n = widths.size();
+		int sum = widths.stream().mapToInt(w -> w).sum();
+		if(sum != totalWidth) {
+			int imax = 0;
+			for(int i = 1; i < n; i++) {
+				if(widths.get(i) > widths.get(imax)) {
+					imax = i;
+				}
+			}
+			widths.set(imax, totalWidth - sum + widths.get(imax));
+		}
+	}
+
+	private static int[] div(int dividend, int divider) {
+		int[] result = new int[divider];
+		Arrays.fill(result, dividend / divider);
+		for(int i = 0, n = dividend % divider; i < n; i++) {
+			result[i]++;
+		}
 		return result;
 	}
 }

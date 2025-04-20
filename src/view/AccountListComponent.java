@@ -20,17 +20,18 @@ public class AccountListComponent extends Component {
 		List<List<Component>> table = new ArrayList<>();
 		table.add(List.of(
 			new TextComponent("Account number", TextComponent.Alignment.CENTER, Color.YELLOW),
-			new TextComponent("Owner", TextComponent.Alignment.CENTER, Color.YELLOW),
-			new TextComponent("Balance", TextComponent.Alignment.CENTER, Color.YELLOW)
+			new TextComponent("Balance", TextComponent.Alignment.CENTER, Color.YELLOW),
+			new TextComponent("Owner", TextComponent.Alignment.CENTER, Color.YELLOW)
 		));
 		for(Account account : accounts) {
 			table.add(List.of(
 				new TextComponent(account.getAccountNumber()),
-				new TextComponent(account.getClient()),
-				new TextComponent(account.getBalance().toString(), TextComponent.Alignment.CENTER)
+				new TextComponent(account.getBalance().toString(), TextComponent.Alignment.CENTER),
+				new TextComponent(account.getClient())
 			));
 		}
-		TableComponent tableComponent = new TableComponent(table, List.of(0.2, 0.5, 0.3), Color.YELLOW);
+		List<Double> widths = TableComponent.calcWidths(List.of(19, 12, 0), width);
+		TableComponent tableComponent = new TableComponent(table, widths, Color.YELLOW);
 		return tableComponent.format(width);
 	}
 }
