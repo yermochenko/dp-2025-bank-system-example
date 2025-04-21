@@ -1,11 +1,14 @@
 package domain;
 
+import java.util.List;
+
 public class Account {
 	private Long id;
 	private String accountNumber;
 	private String client;
 	private Long balance;
 	private boolean active;
+	private List<Transfer> history;
 
 	public Long getId() {
 		return id;
@@ -45,5 +48,13 @@ public class Account {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public List<Transfer> getHistory() {
+		return history;
+	}
+
+	public void setHistory(List<Transfer> history) {
+		this.history = history;
 	}
 }

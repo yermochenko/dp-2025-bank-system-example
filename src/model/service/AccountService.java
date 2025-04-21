@@ -1,24 +1,53 @@
 package model.service;
 
 import domain.Account;
+import domain.Transfer;
 import exception.ApplicationException;
 import model.repository.AccountRepository;
+import model.repository.TransferRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AccountService {
 	private AccountRepository accountRepository;
+	private TransferRepository transferRepository;
 
 	public void setAccountRepository(AccountRepository accountRepository) {
 		this.accountRepository = accountRepository;
 	}
 
+	public void setTransferRepository(TransferRepository transferRepository) {
+		this.transferRepository = transferRepository;
+	}
+
 	public List<Account> showAll() {
 		return accountRepository.readAll();
+	}
+
+	public Optional<Account> showOne(String accountNumber) {
+		Optional<Account> account = accountRepository.readByNumber(accountNumber);
+		if(account.isPresent()) {
+			List<Transfer> history = transferRepository.readByAccount(account.get().getId());
+			for(Transfer transfer : history) {
+				Account from = transfer.getFromAccount();
+				if(from != null) {
+					from = accountRepository.read(from.getId()).orElse(null);
+					transfer.setFromAccount(from);
+				}
+				Account to = transfer.getToAccount();
+				if(to != null) {
+					to = accountRepository.read(to.getId()).orElse(null);
+					transfer.setToAccount(to);
+				}
+			}
+			account.get().setHistory(history);
+		}
+		return account;
 	}
 
 	public void create(Account account) throws ApplicationException {

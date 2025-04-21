@@ -30,12 +30,15 @@ public class MenuCreator {
 
 		AccountService accountService = new AccountService();
 		accountService.setAccountRepository(accountRepository);
+		accountService.setTransferRepository(transferRepository);
 		TransferService transferService = new TransferService();
 		transferService.setAccountRepository(accountRepository);
 		transferService.setTransferRepository(transferRepository);
 
 		ShowAllAccountMenuItem showAllAccountMenuItem = new ShowAllAccountMenuItem();
 		showAllAccountMenuItem.setAccountService(accountService);
+		ShowAccountDetailsMenuItem showAccountDetailsMenuItem = new ShowAccountDetailsMenuItem();
+		showAccountDetailsMenuItem.setAccountService(accountService);
 		AddNewAccountMenuItem addNewAccountMenuItem = new AddNewAccountMenuItem();
 		addNewAccountMenuItem.setAccountService(accountService);
 		CreditFundsToAccountMenuItem creditFundsToAccountMenuItem = new CreditFundsToAccountMenuItem();
@@ -46,6 +49,7 @@ public class MenuCreator {
 
 		return List.of(
 			showAllAccountMenuItem,
+			showAccountDetailsMenuItem,
 			addNewAccountMenuItem,
 			creditFundsToAccountMenuItem,
 			transferMoneyMenuItem,
