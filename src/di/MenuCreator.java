@@ -45,6 +45,8 @@ public class MenuCreator {
 		creditFundsToAccountMenuItem.setTransferService(transferService);
 		TransferMoneyMenuItem transferMoneyMenuItem = new TransferMoneyMenuItem();
 		transferMoneyMenuItem.setTransferService(transferService);
+		DeleteAccountMenuItem deleteAccountMenuItem = new DeleteAccountMenuItem();
+		deleteAccountMenuItem.setAccountService(accountService);
 		ExitMenuItem exitMenuItem = new ExitMenuItem();
 
 		return List.of(
@@ -53,6 +55,7 @@ public class MenuCreator {
 			addNewAccountMenuItem,
 			creditFundsToAccountMenuItem,
 			transferMoneyMenuItem,
+			deleteAccountMenuItem,
 			exitMenuItem
 		);
 	}

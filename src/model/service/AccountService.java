@@ -65,4 +65,32 @@ public class AccountService {
 			throw new ApplicationException(e.getMessage());
 		}
 	}
+
+	public void delete(String accountNumber) throws ApplicationException {
+		Optional<Account> foundAccount = accountRepository.readByNumber(accountNumber);
+		if(foundAccount.isPresent()) {
+			Account account = foundAccount.get();
+			if(account.isActive()) {
+				if(account.getBalance() == 0) {
+					List<Transfer> history = transferRepository.readByAccount(foundAccount.get().getId());
+					try {
+						if(history.isEmpty()) {
+							accountRepository.delete(account.getId());
+						} else {
+							account.setActive(false);
+							accountRepository.update(account);
+						}
+					} catch(IOException e) {
+						throw new ApplicationException(e.getMessage());
+					}
+				} else {
+					throw new ApplicationException("Account has non zero balance");
+				}
+			} else {
+				throw new ApplicationException("Account is not active");
+			}
+		} else {
+			throw new ApplicationException("Account not exists");
+		}
+	}
 }
